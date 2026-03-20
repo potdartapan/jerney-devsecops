@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # 1. Made the Deployment name dynamic
+  name: "{{ .Release.Name }}-jerney-backend"
+  labels:
+    app: "{{ .Release.Name }}-jerney-backend"
+spec:
+  # 2. Parameterized the replica count
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Release.Name }}-jerney-backend"
+  template:
+    metadata:
+      labels:
+        # 3. Made the pod labels dynamic to match the selector
+        app: "{{ .Release.Name }}-jerney-backend"
+    spec:
+      containers:
+      - name: jerney-backend
+        # 4. Parameterized the image and tag
+        image: "{{ .Values.backend.image }}:{{ .Values.backend.tag }}"
+        ports: 
+        - containerPort: 5000
+        env:
+        - name: DB_HOST
+          value: "{{ .Release.Name }}-postgres-headless"
+        - name: DB_USER
+          value: "node_user"
+        - name: DB_PASSWORD
+          # 5. Single Source of Truth: Pulling the password from values.yaml!
+          value: {{ .Values.database.password | quote }}
+        - name: DB_NAME
+          value: "webapp_db"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # 6. Made the Service name dynamic
+  name: "{{ .Release.Name }}-jerney-backend"
+spec:
+  selector:
+    # 7. Updated the selector so the Service can find the dynamic Pods
+    app: "{{ .Release.Name }}-jerney-backend"
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000

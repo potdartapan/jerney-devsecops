@@ -1,0 +1,19 @@
+# jerney-app/values.yaml
+
+database:
+  image: postgres
+  tag: "15"
+  password: supersecretpassword
+  storage: 8Gi
+
+backend:
+  image: abhishekf5/jerney-backend
+  tag: latest
+  replicas: 1
+  port: 5000
+
+frontend:
+  image: abhishekf5/jerney-frontend
+  tag: latest
+  replicas: 1
+  port: 8080

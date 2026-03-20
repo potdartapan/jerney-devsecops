@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-postgres-headless
+  labels:
+    app: postgres-headless
+spec:
+  ports:
+  - port: 5432
+    name: db
+  clusterIP: None
+  selector:
+    app: postgres-db
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-postgres-statefulset
+spec:
+  selector:
+    matchLabels:
+      app: postgres-db 
+  serviceName: {{ .Release.Name }}-postgres-headless
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres-db
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: postgres-db
+        # 1. Switched to the official Postgres image
+        image: {{ .Values.database.image }}:{{ .Values.database.tag }}
+        ports:
+        - containerPort: 5432
+          name: db
+        env:
+        # 2. Updated variable names to match the official image
+        - name: POSTGRES_USER
+          value: "node_user"
+        - name: POSTGRES_PASSWORD
+          value: {{ .Values.database.password | quote }}
+        - name: POSTGRES_DB
+          value: "webapp_db"
+        - name: PGDATA
+          value: "/var/lib/postgresql/data/pgdata"
+        volumeMounts:
+        - name: db-data
+          # 3. Updated mount path for official Postgres
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: db-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 8Gi

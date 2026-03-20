@@ -1,0 +1,22 @@
+# argocd-apps/jerney-stack.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jerney-stack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/tapanpotdar/jerney.git # Make sure this matches your actual remote URL!
+    targetRevision: HEAD
+    path: charts/jerney-app # This points exactly to the Helm chart you just built
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

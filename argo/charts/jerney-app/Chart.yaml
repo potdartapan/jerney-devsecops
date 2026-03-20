@@ -1,0 +1,6 @@
+apiVersion: v2
+name: jerney-app
+description: A 3-tier application deployment for Jerney project
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
