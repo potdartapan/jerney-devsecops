@@ -5,15 +5,13 @@ database:
   tag: "15"
   password: supersecretpassword
   storage: 8Gi
-
 backend:
   image: abhishekf5/jerney-backend
-  tag: latest
+  tag: 6c360e65d696ee23c4d403d20d5e15d8dc9c0d1b
   replicas: 1
   port: 5000
-
 frontend:
   image: abhishekf5/jerney-frontend
-  tag: latest
+  tag: 6c360e65d696ee23c4d403d20d5e15d8dc9c0d1b
   replicas: 1
   port: 8080
