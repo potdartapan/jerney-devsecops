@@ -4,21 +4,28 @@ resource "helm_release" "argocd" {
   chart            = "argo-cd"
   namespace        = "argocd"
   create_namespace = true
-  version          = "5.51.6" # It is best practice to pin the Helm chart version
+  version          = "5.51.6" 
 
-  # We use yamlencode to pass the Root App directly into the Helm chart
   values = [
     yamlencode({
-      server = {
-        additionalApplications = [
-          {
+      # additionalApplications was removed in v5+. 
+      # We now use extraObjects to inject the Application natively.
+      extraObjects = [
+        {
+          apiVersion = "argoproj.io/v1alpha1"
+          kind       = "Application"
+          metadata = {
             name      = "root-application"
             namespace = "argocd"
-            project   = "default"
+          }
+          spec = {
+            project = "default"
             source = {
-              repoURL        = "https://github.com/tapanpotdar/jerney-devsecops.git"
+              repoURL        = "https://github.com/potdartapan/jerney-devsecops.git"
               targetRevision = "HEAD"
-              path           = "argo/argocd-apps"
+              
+              # Ensure this points to the exact folder containing your Chart.yaml
+              path           = "argo/charts/jerney-app" 
             }
             destination = {
               server    = "https://kubernetes.default.svc"
@@ -31,8 +38,8 @@ resource "helm_release" "argocd" {
               }
             }
           }
-        ]
-      }
+        }
+      ]
     })
   ]
 }

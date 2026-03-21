@@ -140,13 +140,15 @@ jobs:
           echo "========================================="
           
           echo "Fetching NGINX Ingress Public IP..."
-          for i in {1..5}; do
-            PUBLIC_IP=$(kubectl get svc ingress-nginx-controller -n ingress-basic -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
-            if [ -n "$PUBLIC_IP" ]; then
-              echo "Application Endpoint: http://$PUBLIC_IP"
-              break
-            fi
-            echo "Waiting for LoadBalancer IP..."
-            sleep 15
-          done
+          # Added || true so GitHub Actions doesn't crash if the service isn't ready yet
+          # Increased loop to 12 (3 minutes total) to give Azure time to provision the IP
+            for i in {1..12}; do
+              PUBLIC_IP=$(kubectl get svc ingress-nginx-controller -n ingress-basic -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)
+              if [ -n "$PUBLIC_IP" ]; then
+                echo "Application Endpoint: http://$PUBLIC_IP"
+                break
+              fi
+              echo "Waiting for LoadBalancer IP (can take 2-3 minutes in Azure)..."
+              sleep 15
+            done
           echo "========================================="
