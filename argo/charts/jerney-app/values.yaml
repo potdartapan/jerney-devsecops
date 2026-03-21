@@ -7,11 +7,11 @@ database:
   storage: 8Gi
 backend:
   image: abhishekf5/jerney-backend
-  tag: 6c360e65d696ee23c4d403d20d5e15d8dc9c0d1b
+  tag: 8fcaec91cc5e3b4a6cdb4d9a30732abefe552db2
   replicas: 1
   port: 5000
 frontend:
   image: abhishekf5/jerney-frontend
-  tag: 6c360e65d696ee23c4d403d20d5e15d8dc9c0d1b
+  tag: 8fcaec91cc5e3b4a6cdb4d9a30732abefe552db2
   replicas: 1
   port: 8080
