@@ -16,9 +16,9 @@ resource "helm_release" "argocd" {
             namespace = "argocd"
             project   = "default"
             source = {
-              repoURL        = "https://github.com/tapanpotdar/jerney.git"
+              repoURL        = "https://github.com/tapanpotdar/jerney-devsecops.git"
               targetRevision = "HEAD"
-              path           = "argocd-apps"
+              path           = "argo/argocd-apps"
             }
             destination = {
               server    = "https://kubernetes.default.svc"
