@@ -132,7 +132,7 @@ jobs:
           sleep 10
           
           ARGOCD_PASS=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
-          echo "::add-mask::$ARGOCD_PASS" 
+          
           
           echo "Argo CD Username: admin"
           echo "Argo CD Password: $ARGOCD_PASS"
