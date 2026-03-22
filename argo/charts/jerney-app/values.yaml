@@ -7,11 +7,11 @@ database:
   storage: 8Gi
 backend:
   image: potdartapan/jerney-backend
-  tag: a40ed582a9dfc0df173a41feda5ff0a16cfa8354
+  tag: ddf707a8d6c69afef147d912b58b334bda543a6c
   replicas: 1
   port: 5000
 frontend:
   image: potdartapan/jerney-frontend
-  tag: a40ed582a9dfc0df173a41feda5ff0a16cfa8354
+  tag: ddf707a8d6c69afef147d912b58b334bda543a6c
   replicas: 1
   port: 8080
