@@ -122,6 +122,28 @@ jobs:
 
       - name: Connect to AKS Cluster
         run: az aks get-credentials --resource-group jerney-rg --name jerney-aks --admin
+      - name: Bootstrap Argo CD Root Application
+        run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: argoproj.io/v1alpha1
+          kind: Application
+          metadata:
+            name: root-application
+            namespace: argocd
+          spec:
+            project: default
+            source:
+              repoURL: https://github.com/potdartapan/jerney-devsecops.git
+              targetRevision: HEAD
+              path: argo/charts/jerney-app
+            destination:
+              server: https://kubernetes.default.svc
+              namespace: default
+            syncPolicy:
+              automated:
+                prune: true
+                selfHeal: true
+          EOF
 
       - name: Print Endpoints & Credentials
         run: |
