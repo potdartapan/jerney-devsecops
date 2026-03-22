@@ -25,7 +25,7 @@ resource "helm_release" "argocd_apps" {
     yamlencode({
       applications = {
         "root-application" = {
-          namespace = "argocd"
+          namespace = "default"
           project   = "default"
           source = {
             repoURL        = "https://github.com/potdartapan/jerney-devsecops.git"
