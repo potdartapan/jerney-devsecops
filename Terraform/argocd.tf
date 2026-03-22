@@ -10,6 +10,11 @@ resource "helm_release" "argocd" {
   # The extraObjects block has been completely removed!
 }
 
+resource "time_sleep" "wait_for_crds" {
+  depends_on = [helm_release.argocd]
+  create_duration = "30s"
+}
+
 # 2. Install the Root Application SECOND
 resource "helm_release" "argocd_apps" {
   name       = "argocd-apps"
@@ -20,7 +25,7 @@ resource "helm_release" "argocd_apps" {
   
   # This is the magic line. It forces Terraform to wait for the CRDs!
   depends_on = [helm_release.argocd]
-
+  
   values = [
     yamlencode({
       applications = {
