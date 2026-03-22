@@ -1,3 +1,4 @@
+# 1. Install Argo CD (and its CRDs) FIRST
 resource "helm_release" "argocd" {
   name             = "argocd"
   repository       = "https://argoproj.github.io/argo-helm"
@@ -5,41 +6,44 @@ resource "helm_release" "argocd" {
   namespace        = "argocd"
   create_namespace = true
   version          = "5.51.6" 
+  
+  # The extraObjects block has been completely removed!
+}
+
+# 2. Install the Root Application SECOND
+resource "helm_release" "argocd_apps" {
+  name       = "argocd-apps"
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argocd-apps"
+  namespace  = "argocd"
+  version    = "2.0.4"
+  
+  # This is the magic line. It forces Terraform to wait for the CRDs!
+  depends_on = [helm_release.argocd]
 
   values = [
     yamlencode({
-      # additionalApplications was removed in v5+. 
-      # We now use extraObjects to inject the Application natively.
-      extraObjects = [
-        {
-          apiVersion = "argoproj.io/v1alpha1"
-          kind       = "Application"
-          metadata = {
-            name      = "root-application"
+      applications = {
+        "root-application" = {
+          namespace = "argocd"
+          project   = "default"
+          source = {
+            repoURL        = "https://github.com/potdartapan/jerney-devsecops.git"
+            targetRevision = "HEAD"
+            path           = "argo/charts/jerney-app" 
+          }
+          destination = {
+            server    = "https://kubernetes.default.svc"
             namespace = "argocd"
           }
-          spec = {
-            project = "default"
-            source = {
-              repoURL        = "https://github.com/potdartapan/jerney-devsecops.git"
-              targetRevision = "HEAD"
-              
-              # Ensure this points to the exact folder containing your Chart.yaml
-              path           = "argo/charts/jerney-app" 
-            }
-            destination = {
-              server    = "https://kubernetes.default.svc"
-              namespace = "argocd"
-            }
-            syncPolicy = {
-              automated = {
-                prune    = true
-                selfHeal = true
-              }
+          syncPolicy = {
+            automated = {
+              prune    = true
+              selfHeal = true
             }
           }
         }
-      ]
+      }
     })
   ]
 }
