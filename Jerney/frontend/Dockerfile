@@ -12,8 +12,8 @@ FROM nginx:1.27-alpine AS production
 # Security: remove default nginx config
 RUN rm -rf /etc/nginx/conf.d/default.conf /usr/share/nginx/html/*
 
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy nginx config as a template — envsubst will replace ${BACKEND_HOST} at container startup
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 # Copy built frontend from build stage
 COPY --from=build /app/dist /usr/share/nginx/html
@@ -22,6 +22,8 @@ COPY --from=build /app/dist /usr/share/nginx/html
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \
+    chown -R nginx:nginx /etc/nginx/conf.d && \
+    chown -R nginx:nginx /etc/nginx/templates && \
     touch /var/run/nginx.pid && \
     chown -R nginx:nginx /var/run/nginx.pid
 

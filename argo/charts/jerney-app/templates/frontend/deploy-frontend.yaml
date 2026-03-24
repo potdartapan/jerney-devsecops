@@ -19,6 +19,9 @@ spec:
         image: {{ .Values.frontend.image }}:{{ .Values.frontend.tag }}
         ports:
         - containerPort: 8080
+        env:
+        - name: BACKEND_HOST
+          value: "{{ .Release.Name }}-jerney-backend"
 ---
 apiVersion: v1
 kind: Service
