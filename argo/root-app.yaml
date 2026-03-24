@@ -7,7 +7,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/tapanpotdar/jerney.git
+    repoURL: https://github.com/potdartapan/jerney-devsecops.git
     targetRevision: HEAD
     path: argo/argocd-apps # The folder containing your Child apps
   destination:

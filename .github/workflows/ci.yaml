@@ -135,10 +135,10 @@ jobs:
             source:
               repoURL: https://github.com/potdartapan/jerney-devsecops.git
               targetRevision: HEAD
-              path: argo/charts/jerney-app
+              path: argo/argocd-apps
             destination:
               server: https://kubernetes.default.svc
-              namespace: default
+              namespace: argocd
             syncPolicy:
               automated:
                 prune: true

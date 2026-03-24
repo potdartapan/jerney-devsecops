@@ -7,7 +7,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/tapanpotdar/jerney.git # Make sure this matches your actual remote URL!
+    repoURL: https://github.com/potdartapan/jerney-devsecops.git
     targetRevision: HEAD
     path: argo/charts/jerney-app
     helm:
