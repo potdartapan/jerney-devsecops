@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/tapanpotdar/jerney.git # Make sure this matches your actual remote URL!
     targetRevision: HEAD
-    path: charts/jerney-app # This points exactly to the Helm chart you just built
+    path: argo/charts/jerney-app
     helm:
       valueFiles:
         - values.yaml

@@ -3,14 +3,21 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-jerney-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
   - http:
       paths:
-      - path: /
-        pathType: Prefix
+      - path: /api(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ .Release.Name }}-jerney-backend
+            port:
+              number: 5000
+      - path: /()(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: {{ .Release.Name }}-frontend-service
